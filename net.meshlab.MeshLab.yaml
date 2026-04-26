@@ -1,7 +1,7 @@
 app-id: net.meshlab.MeshLab
 runtime: org.kde.Platform
 sdk: org.kde.Sdk
-runtime-version: 5.15-24.08
+runtime-version: 5.15-25.08
 command: meshlab
 rename-desktop-file: meshlab.desktop
 rename-icon: meshlab
@@ -21,13 +21,10 @@ cleanup:
   - /include
   - /lib/cmake
   - /lib/pkgconfig
+  - /share/aclocal
   - /share/doc
+  - /share/info
   - /share/man
-  - /bin/rbox
-  - /bin/q*
-  - /bin/3dsdump
-  - /bin/lib3ds-*
-  - /bin/cgal_*
   - '*.la'
   - '*.a'
 
@@ -57,8 +54,8 @@ modules:
       - ./b2 install link=static runtime-link=static cxxflags="-fPIC" -j $FLATPAK_BUILDER_N_JOBS
     sources:
       - type: archive
-        url: https://archives.boost.io/release/1.89.0/source/boost_1_89_0.tar.bz2
-        sha256: 85a33fa22621b4f314f8e85e1a5e2a9363d22e4f4992925d4bb3bc631b5a0c7a
+        url: https://archives.boost.io/release/1.91.0/source/boost_1_91_0.tar.bz2
+        sha256: de5e6b0e4913395c6bdfa90537febd9028ea4c0735d2cdb0cd9b45d5f51264f5
         x-checker-data:
           type: anitya
           project-id: 6845
@@ -71,10 +68,12 @@ modules:
     config-opts:
       - -DCMAKE_BUILD_TYPE=Release
       - -DCGAL_HEADER_ONLY=ON
+    cleanup:
+      - /bin
     sources:
       - type: archive
-        url: https://github.com/CGAL/cgal/releases/download/v6.1/CGAL-6.1.tar.xz
-        sha256: 618da8a8b3f5be46b4f0a47a1efb3c9e6c03d6aab0f5531d56d355d32701d79f
+        url: https://github.com/CGAL/cgal/releases/download/v6.1.1/CGAL-6.1.1.tar.xz
+        sha256: 52506935f70e247ed2777e3c65f20e86f79208c2a2d0e180ae7475daf11c96ef
         x-checker-data:
           type: anitya
           project-id: 273
@@ -84,23 +83,25 @@ modules:
   - name: Eigen3
     buildsystem: cmake-ninja
     builddir: true
+    cleanup:
+      - '*'
     sources:
       - type: archive
-        url: https://gitlab.com/libeigen/eigen/-/archive/5.0.0/eigen-5.0.0.tar.bz2
-        sha256: bdca0ec740fb83be21fe038699923f4c589ead9ab904f4058a9c97752e60d50b
+        url: https://gitlab.com/libeigen/eigen/-/archive/5.0.1/eigen-5.0.1.tar.bz2
+        sha256: e4de6b08f33fd8b8985d2f204381408c660bffa6170ac65b68ae1bd3cd575c0a
         x-checker-data:
           type: anitya
           project-id: 13751
           stable-only: true
           url-template: https://gitlab.com/libeigen/eigen/-/archive/$version/eigen-$version.tar.bz2
-    cleanup:
-      - '*'
 
   - name: lib3ds
     buildsystem: autotools
     config-opts:
       - --disable-shared
       - --with-pic
+    cleanup:
+      - /bin
     sources:
       - type: archive
         url: https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/lib3ds/lib3ds-1.3.0.zip
@@ -127,14 +128,14 @@ modules:
 
   - name: Xerces-C
     buildsystem: cmake-ninja
+    cleanup:
+      - /bin
     sources:
       - type: archive
         url: https://github.com/apache/xerces-c/archive/refs/tags/v3.3.0.tar.gz
         sha256: 0f28ea2d7a0a3824d326c8bc4be26a3bb01dde289663beb6f15b241f80cbd3ae
       - type: patch
         path: xerces-cpp17.patch
-    cleanup:
-      - /bin
 
   - name: MeshLab
     buildsystem: cmake-ninja
