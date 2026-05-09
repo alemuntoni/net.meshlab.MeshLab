@@ -38,7 +38,7 @@ modules:
       - aarch64
     buildsystem: simple
     build-commands:
-      - cmake -B _build -DCMAKE_BUILD_TYPE=Release -DDEFAULT_ES=2
+      - cmake -B _build -DCMAKE_BUILD_TYPE=Release -DDEFAULT_ES=2 -DCMAKE_POLICY_VERSION_MINIMUM=3.5
       - cmake --build _build --parallel $FLATPAK_BUILDER_N_JOBS
       - install -Dm755 lib/libGL.so.1 ${FLATPAK_DEST}/lib/libGL.so.1
       - ln -sf libGL.so.1 ${FLATPAK_DEST}/lib/libGL.so
