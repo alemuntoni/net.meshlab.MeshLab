@@ -152,6 +152,11 @@ modules:
           # declarations in the GLES3 headers.
           cflags: -DGL_GLES_PROTOTYPES=0
           cxxflags: -DGL_GLES_PROTOTYPES=0
+          # StructureSynth uses GL 1.x immediate-mode functions (glVertex3f,
+          # glNormal3f, etc.) that do not exist in OpenGL ES 3.x, so the
+          # filter_ssynth plugin cannot be built on aarch64.
+          config-opts:
+            - -DMESHLAB_ALLOW_DOWNLOAD_SOURCE_STRUCTURE_SYNTH=OFF
     sources:
       - type: git
         url: https://github.com/cnr-isti-vclab/meshlab.git
