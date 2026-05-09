@@ -46,7 +46,7 @@ modules:
       - sed -i 's/PFNGLOBJECTPTRLABELPROC) (void \*/PFNGLOBJECTPTRLABELPROC) (const void */g' /app/include/GL/glew.h
     sources:
       - type: inline
-        filename: placeholder
+        dest-filename: placeholder
         contents: ""
 
   - name: Boost
