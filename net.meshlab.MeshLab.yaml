@@ -29,6 +29,30 @@ cleanup:
   - '*.a'
 
 modules:
+  # On aarch64 the KDE SDK Qt uses GLES3, which has no GL 1.x fixed-function
+  # pipeline. gl4es provides a GL 1.x/2.x → GLES3 translation layer so that
+  # vcglib's immediate-mode trackball code compiles and runs correctly.
+  # It must be listed before GLEW so GLEW links against gl4es's libGL.so.1.
+  - name: gl4es
+    only-arches:
+      - aarch64
+    buildsystem: simple
+    build-commands:
+      - cmake -B _build -DCMAKE_BUILD_TYPE=Release -DDEFAULT_ES=2
+      - cmake --build _build --parallel $FLATPAK_BUILDER_N_JOBS
+      - install -Dm755 lib/libGL.so.1 ${FLATPAK_DEST}/lib/libGL.so.1
+      - ln -sf libGL.so.1 ${FLATPAK_DEST}/lib/libGL.so
+      - install -d ${FLATPAK_DEST}/include/GL
+      - install -m644 include/GL/gl.h include/GL/glext.h ${FLATPAK_DEST}/include/GL/
+    sources:
+      - type: git
+        url: https://github.com/ptitSeb/gl4es.git
+        tag: v1.1.6
+        commit: c9895df34cd466c23bc60c2bd3db3d87e98fcbe7
+        x-checker-data:
+          type: git
+          tag-pattern: ^(v[\d.]+)$
+
   - shared-modules/glew/glew.json
   - shared-modules/glu/glu-9.json
 
@@ -175,6 +199,12 @@ modules:
         options:
           - -d
           - src/external
+      # Fix vcglib include order: GL/gl.h must be included before wrap/gl/math.h
+      # so that glMultMatrixf (and other GL 1.x functions) are declared before
+      # deprecated_math.h uses them. On aarch64 GLES, Qt's qgl.h does not pull
+      # in these declarations, making the existing order a compile error.
+      - type: patch
+        path: vcglib-view-gl-include-order.patch
 
   # - name: MeshLab-extra-plugin
   #   buildsystem: cmake-ninja

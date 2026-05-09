@@ -1,0 +1,21 @@
+--- a/src/vcglib/wrap/gui/view.h
++++ b/src/vcglib/wrap/gui/view.h
+@@ -54,17 +54,17 @@
+ #include <vcg/space/point3.h>
+ #include <vcg/space/plane3.h>
+ #include <vcg/space/line3.h>
+ #include <vcg/math/matrix44.h>
+-#include <wrap/gl/math.h>
+ 
+ #ifdef WIN32
+ #include <windows.h>
+ #endif
+ 
+ #if defined(__APPLE__)
+ #include <OpenGL/gl.h>
+ #else
+ #include <GL/gl.h>
+ #endif
++#include <wrap/gl/math.h>
+ 
+ namespace vcg {
