@@ -42,8 +42,8 @@ modules:
       - aarch64
     buildsystem: simple
     build-commands:
-      - sed -i 's/PFNGLGETOBJECTPTRLABELPROC) (void \*/PFNGLGETOBJECTPTRLABELPROC) (const void */g' /app/include/GL/glew.h
-      - sed -i 's/PFNGLOBJECTPTRLABELPROC) (void \*/PFNGLOBJECTPTRLABELPROC) (const void */g' /app/include/GL/glew.h
+      - sed -i 's/PFNGLGETOBJECTPTRLABELPROC) (void\*/PFNGLGETOBJECTPTRLABELPROC) (const void*/g' /app/include/GL/glew.h
+      - sed -i 's/PFNGLOBJECTPTRLABELPROC) (void\*/PFNGLOBJECTPTRLABELPROC) (const void*/g' /app/include/GL/glew.h
     sources:
       - type: inline
         dest-filename: placeholder
