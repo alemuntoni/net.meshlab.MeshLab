@@ -143,6 +143,15 @@ modules:
     buildsystem: cmake-ninja
     config-opts:
       - -DCMAKE_BUILD_TYPE:STRING=Release
+    build-options:
+      arch:
+        aarch64:
+          # GLES3/gl32.h declares the same function names that GLEW maps to
+          # function-pointer macros, causing "redeclared as different kind of
+          # entity" errors. GL_GLES_PROTOTYPES=0 suppresses those prototype
+          # declarations in the GLES3 headers.
+          cflags: -DGL_GLES_PROTOTYPES=0
+          cxxflags: -DGL_GLES_PROTOTYPES=0
     sources:
       - type: git
         url: https://github.com/cnr-isti-vclab/meshlab.git
