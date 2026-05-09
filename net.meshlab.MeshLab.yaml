@@ -32,6 +32,22 @@ modules:
   - shared-modules/glew/glew.json
   - shared-modules/glu/glu-9.json
 
+  # On aarch64 the KDE SDK's Qt is GLES-enabled. Its GLES3/gl32.h defines
+  # PFNGLOBJECTPTRLABELPROC and PFNGLGETOBJECTPTRLABELPROC with `const void*`,
+  # while GLEW 2.3.1 defines them with `void*`. Because these are typedefs (not
+  # function prototypes), GL_GLES_PROTOTYPES=0 does not suppress them and the
+  # compiler rejects the redefinition. Patch the installed header to match.
+  - name: glew-fix-aarch64-const-ptr
+    only-arches:
+      - aarch64
+    buildsystem: simple
+    build-commands:
+      - |
+        sed -i 's/PFNGLGETOBJECTPTRLABELPROC) (void\* ptr/PFNGLGETOBJECTPTRLABELPROC) (const void* ptr/g' /app/include/GL/glew.h
+      - |
+        sed -i 's/PFNGLOBJECTPTRLABELPROC) (void\* ptr/PFNGLOBJECTPTRLABELPROC) (const void* ptr/g' /app/include/GL/glew.h
+    sources: []
+
   - name: Boost
     buildsystem: simple
     build-commands:
@@ -126,16 +142,6 @@ modules:
     buildsystem: cmake-ninja
     config-opts:
       - -DCMAKE_BUILD_TYPE:STRING=Release
-    build-options:
-      arch:
-        aarch64:
-          # On aarch64 the KDE SDK's Qt is GLES-enabled, causing its headers to
-          # pull in GLES3/gl32.h. That conflicts with GLEW's macro redefinitions
-          # of the same GL 4.1 functions (e.g. glProgramUniform*). Since MeshLab
-          # uses GLEW for desktop-GL function loading, it never needs raw GLES3
-          # prototypes, so we suppress them to avoid the redeclaration errors.
-          cflags: -DGL_GLES_PROTOTYPES=0
-          cxxflags: -DGL_GLES_PROTOTYPES=0
     sources:
       - type: git
         url: https://github.com/cnr-isti-vclab/meshlab.git
