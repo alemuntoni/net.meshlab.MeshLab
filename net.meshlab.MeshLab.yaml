@@ -126,6 +126,16 @@ modules:
     buildsystem: cmake-ninja
     config-opts:
       - -DCMAKE_BUILD_TYPE:STRING=Release
+    build-options:
+      arch:
+        aarch64:
+          # On aarch64 the KDE SDK's Qt is GLES-enabled, causing its headers to
+          # pull in GLES3/gl32.h. That conflicts with GLEW's macro redefinitions
+          # of the same GL 4.1 functions (e.g. glProgramUniform*). Since MeshLab
+          # uses GLEW for desktop-GL function loading, it never needs raw GLES3
+          # prototypes, so we suppress them to avoid the redeclaration errors.
+          cflags: -DGL_GLES_PROTOTYPES=0
+          cxxflags: -DGL_GLES_PROTOTYPES=0
     sources:
       - type: git
         url: https://github.com/cnr-isti-vclab/meshlab.git
